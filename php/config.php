@@ -1,9 +1,9 @@
 <?php
-$host     = getenv('DB_HOST')     ?: 'localhost';
-$dbname   = getenv('DB_NAME')     ?: 'whataplant_db';
-$username = getenv('DB_USER')     ?: 'root';
-$password = getenv('DB_PASSWORD') ?: '';
-$port     = getenv('DB_PORT')     ?: '3306';
+$host     = getenv('MYSQLHOST')          ?: 'localhost';
+$dbname   = getenv('MYSQLDATABASE')      ?: 'whataplant_db';
+$username = getenv('MYSQLUSER')          ?: 'root';
+$password = getenv('MYSQLPASSWORD')      ?: '';
+$port     = getenv('MYSQLPORT')          ?: '3306';
 
 try {
     $pdo = new PDO(
