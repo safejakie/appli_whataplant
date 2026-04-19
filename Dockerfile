@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y \
     python3 python3-pip supervisor \
     && apt-get clean
 
-RUN pip3 install --break-system-packages fastapi uvicorn[standard] python-multipart pydantic requests opencv-python-headless numpy groq google-generativeai pillow python-dotenv wikipediaapi
+RUN pip3 install --break-system-packages fastapi uvicorn[standard] python-multipart pydantic requests opencv-python-headless numpy groq google-generativeai pillow python-dotenv Wikipedia-API
 
 RUN rm -f /var/www/html/index.html
 
