@@ -1,21 +1,20 @@
 FROM php:8.2-apache
 
-RUN apt-get update && apt-get install -y python3 python3-pip && apt-get clean
+RUN apt-get update && apt-get install -y \
+    python3 python3-pip supervisor \
+    && apt-get clean
 
-COPY requirements.txt /tmp/
-RUN pip3 install --break-system-packages -r /tmp/requirements.txt uvicorn
+RUN pip3 install --break-system-packages fastapi uvicorn[standard] python-multipart pydantic requests opencv-python-headless numpy groq google-generativeai pillow python-dotenv wikipedia
 
-# Copie tout le projet
-COPY . /var/www/html/
-
-# Supprime la page par défaut d'Apache
 RUN rm -f /var/www/html/index.html
 
-# Permet à index.html d'être chargé en priorité
-RUN echo "DirectoryIndex index.html index.php" > /etc/apache2/conf-available/directory-index.conf \
-    && a2enconf directory-index
+COPY . /var/www/html/
 
-# Active les modules
-RUN a2enmod rewrite
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html
 
-CMD sh -c "apache2ctl -D FOREGROUND & cd /var/www/html && python3 -m uvicorn agent:app --host 0.0.0.0 --port 8000"
+RUN echo "[supervisord]\nnodaemon=true\n[program:apache2]\ncommand=apache2ctl -D FOREGROUND\nautorestart=true\n[program:fastapi]\ncommand=python3 -m uvicorn agent:app --host 0.0.0.0 --port 8000 --app-dir /var/www/html\nautorestart=true" > /etc/supervisor/conf.d/app.conf
+
+EXPOSE 80 8000
+
+CMD ["supervisord", "-c", "/etc/supervisor/conf.d/app.conf"]
