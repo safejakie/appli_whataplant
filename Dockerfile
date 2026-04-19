@@ -7,6 +7,9 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -f /etc/nginx/sites-enabled/default
 
+# Installer extensions PHP MySQL
+RUN docker-php-ext-install pdo pdo_mysql mysqli
+
 RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
