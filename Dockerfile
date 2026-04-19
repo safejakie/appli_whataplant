@@ -12,9 +12,11 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     && rm -rf /var/lib/apt/lists/*
 
+# Supprime la page par défaut Ubuntu
+RUN rm -rf /var/www/html/*
+
 # Copie tout le projet
 COPY . /var/www/html/
-RUN rm -f /var/www/html/index.html.default
 
 # Configure Apache
 RUN chown -R www-data:www-data /var/www/html
@@ -22,16 +24,12 @@ RUN chmod -R 755 /var/www/html
 RUN a2enmod rewrite php8.1
 
 # Installe les dépendances Python
-COPY requirements.txt /app/requirements.txt
-RUN pip3 install -r /app/requirements.txt
+RUN pip3 install -r /var/www/html/requirements.txt
 
-# Copie agent.py
-COPY agent.py /app/agent.py
-
-# Configure supervisor pour lancer Apache + FastAPI
+# Configure supervisor
 RUN echo "[supervisord]\nnodaemon=true\n\
 [program:apache2]\ncommand=apache2ctl -D FOREGROUND\n\
-[program:fastapi]\ncommand=uvicorn agent:app --host 0.0.0.0 --port 8000 --app-dir /app" \
+[program:fastapi]\ncommand=uvicorn agent:app --host 0.0.0.0 --port 8000 --app-dir /var/www/html" \
 > /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 80 8000
