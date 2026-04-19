@@ -1,21 +1,7 @@
-FROM ubuntu:22.04
-
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update && apt-get install -y \
-    apache2 \
-    php8.1 \
-    php8.1-mysql \
-    libapache2-mod-php8.1 \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY .. /var/www/html/
+FROM php:8.2-apache
+RUN docker-php-ext-install pdo pdo_mysql mysqli
 RUN rm -f /var/www/html/index.html
-RUN chown -R www-data:www-data /var/www/html
-RUN chmod -R 755 /var/www/html
-
-RUN a2enmod rewrite php8.1
-
+COPY .. /var/www/html/
+RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
 EXPOSE 80
-
 CMD ["apache2ctl", "-D", "FOREGROUND"]
