@@ -1,15 +1,20 @@
-FROM php:8.2-apache
+FROM ubuntu:22.04
 
-RUN docker-php-ext-install pdo pdo_mysql mysqli
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+RUN apt-get update && apt-get install -y \
+    apache2 \
+    php8.1 \
+    php8.1-mysql \
+    libapache2-mod-php8.1 \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY .. /var/www/html/
+RUN rm -f /var/www/html/index.html.default
+RUN chown -R www-data:www-data /var/www/html
+RUN chmod -R 755 /var/www/html
 
-RUN find /var/www/html -type d -exec chmod 755 {} \; \
-    && find /var/www/html -type f -exec chmod 644 {} \;
-
-RUN a2enmod rewrite
+RUN a2enmod rewrite php8.1
 
 EXPOSE 80
 
