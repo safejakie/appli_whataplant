@@ -1,5 +1,6 @@
 FROM php:8.2-apache
 RUN docker-php-ext-install pdo pdo_mysql mysqli
 RUN a2enmod rewrite
-COPY . /var/www/html/
+# Copie tout le projet (racine) dans Apache
+COPY .. /var/www/html/
 EXPOSE 80
