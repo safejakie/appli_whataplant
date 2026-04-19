@@ -15,6 +15,9 @@ RUN /opt/venv/bin/pip install -r /tmp/requirements.txt
 # Copier les fichiers de l'application
 COPY . /var/www/html/
 
+# Rendre start.sh exécutable
+RUN chmod +x /var/www/html/start.sh
+
 # Supprimer index.html si nécessaire (ajuster selon les besoins) - COMMENTÉ POUR GARDER LA PAGE D'ACCUEIL
 # RUN rm -f /var/www/html/index.html
 
@@ -40,4 +43,4 @@ EXPOSE 8080
 # Définir le port par défaut
 ENV PORT=8080
 
-CMD ["supervisord", "-c", "/etc/supervisor/conf.d/app.conf"]
+CMD ["/var/www/html/start.sh"]
