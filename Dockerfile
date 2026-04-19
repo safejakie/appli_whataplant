@@ -12,24 +12,26 @@ RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Installer les packages Python
-RUN /opt/venv/bin/pip install fastapi "uvicorn[standard]" python-multipart pydantic requests opencv-python-headless numpy groq google-generativeai pillow python-dotenv wikipedia-api
+RUN /opt/venv/bin/pip install fastapi "uvicorn[standard]" python-multipart pydantic requests opencv-python-headless numpy groq google-generativeai pillow python-dotenv wikipedia
 
 # Installer extensions PHP
 RUN docker-php-ext-install pdo pdo_mysql mysqli
 
 # Copier le projet
 COPY . /var/www/html/
-RUN rm -f /var/www/html/index.html
+# Rendre start.sh exécutable
+RUN chmod +x /var/www/html/start.sh
 
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# Configurer supervisor
-RUN printf "[supervisord]\nnodaemon=true\nuser=root\n\n\
-[program:apache2]\ncommand=/usr/sbin/apache2ctl -D FOREGROUND\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\n\n\
-[program:fastapi]\ncommand=/opt/venv/bin/uvicorn agent:app --host 0.0.0.0 --port 8000 --app-dir /var/www/html\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\n" \
-> /etc/supervisor/conf.d/app.conf
+# Activer les modules Apache pour proxy
+RUN a2enmod proxy proxy_http rewrite
+
+# Désactiver les MPM conflictuels et garder mpm_prefork
+RUN a2dismod mpm_event mpm_worker || true
+RUN a2enmod mpm_prefork
 
 EXPOSE 80 8000
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/app.conf"]
+CMD ["/var/www/html/start.sh"]
