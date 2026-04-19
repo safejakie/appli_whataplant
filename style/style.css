@@ -1,0 +1,528 @@
+/* =============================================
+   WhatAPlant — style.css
+   Glassmorphisme premium · fond visible · textes nets
+   ============================================= */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a1a0f;
+    overflow-x: hidden;
+}
+
+/* ── Fond photo plein écran ── */
+.bg-photo {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: url('../image/fond.jpg') center center / cover no-repeat;
+}
+
+/* ── Voile sombre translucide sur le fond ── */
+.bg-veil {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+        160deg,
+        rgba(5, 20, 10, 0.45) 0%,
+        rgba(5, 20, 10, 0.60) 100%
+    );
+}
+
+/* ── Centrage de la carte ── */
+.page-center {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 440px;
+    padding: 20px 16px;
+    margin: auto;
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.09);
+    backdrop-filter: blur(22px) saturate(1.6) brightness(1.05);
+    -webkit-backdrop-filter: blur(22px) saturate(1.6) brightness(1.05);
+
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+
+    box-shadow:
+        0 2px 0 rgba(255, 255, 255, 0.18) inset,
+        0 24px 60px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(0, 0, 0, 0.12);
+
+    padding: 36px 30px 30px;
+    text-align: center;
+
+    animation: card-appear 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes card-appear {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── En-tête de la carte ── */
+.card-header {
+    margin-bottom: 26px;
+    text-align: center; 
+}
+
+.logo-icon {
+    font-size: clamp(38px, 9vw, 58px);
+    color: #4ade80;
+    margin-bottom: 12px;
+    display: block;
+    transition: font-size 0.3s ease;
+    text-align: center;
+    margin-left: auto;   
+    margin-right: auto;  
+}
+
+.brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.1rem, 6vw, 2.8rem);
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+    margin-bottom: 6px;
+    transition: font-size 0.3s ease;
+}
+
+.brand span {
+    color: #4ADE90;
+}
+
+.slogan {
+    font-size: clamp(0.80rem, 3vw, 0.88rem);
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.82);
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+    letter-spacing: 0.03em;
+}
+
+
+.tab {
+    flex: 1;
+    padding: 10px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.55);
+    transition: all 0.25s;
+}
+
+.tab.active {
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset;
+}
+
+.tab:hover:not(.active) {
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.field-group {
+    margin-bottom: 14px;
+    text-align: left;
+}
+
+.field-label {
+    display: block;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.80);
+    margin-bottom: 7px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.field-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.field-icon {
+    position: absolute;
+    left: 14px;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.85rem;
+    pointer-events: none;
+}
+
+.field-wrap input,
+input[type="email"],
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 13px 44px 13px 40px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: #ffffff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 400;
+    outline: none;
+    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.field-wrap input::placeholder,
+input::placeholder {
+    color: rgba(255, 255, 255, 0.40);
+}
+
+.field-wrap input:focus,
+input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(74, 222, 144, 0.60);
+    box-shadow: 0 0 0 3px rgba(74, 222, 144, 0.15);
+}
+
+.eye-btn {
+    position: absolute;
+    right: 13px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.40);
+    font-size: 0.88rem;
+    padding: 0;
+    transition: color 0.2s;
+}
+.eye-btn:hover { color: rgba(255, 255, 255, 0.80); }
+
+.forgot-row {
+    text-align: center; 
+    margin: -4px 0 14px;
+}
+
+.forgot-link {
+    color: rgba(74, 222, 144, 0.90);
+    font-size: 0.80rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s;
+    text-align: center;
+}
+.forgot-link:hover { color: #4ADE90; }
+
+.btn-main,
+.btn-submit {
+    width: 100%;
+    padding: 14px;
+    margin-top: 6px;
+    border: none;
+    border-radius: 13px;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.97rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: #ffffff;
+    background: linear-gradient(135deg, #03774d 0%, #05a868 50%, #03774d 100%);
+    background-size: 200% 200%;
+    box-shadow:
+        0 4px 20px rgba(3, 119, 77, 0.45),
+        0 1px 0 rgba(255, 255, 255, 0.15) inset;
+    transition: transform 0.2s, box-shadow 0.2s, background-position 0.4s;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+}
+
+.btn-main:hover,
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(3, 119, 77, 0.60);
+    background-position: right center;
+}
+
+.btn-main:active,
+.btn-submit:active {
+    transform: translateY(0);
+}
+
+.btn-main:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.switch-text,
+.toggle-text {
+    margin-top: 18px;
+    font-size: 0.84rem;
+    color: rgba(255, 255, 255, 0.65);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.switch-text a,
+.toggle-text a {
+    color: #4ADE90;
+    text-decoration: none;
+    font-weight: 600;
+    transition: opacity 0.2s;
+}
+.switch-text a:hover,
+.toggle-text a:hover { opacity: 0.75; }
+
+/* INDICATEUR FORCE MOT DE PASSE */
+.strength-bar-wrap {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.strength-bar {
+    height: 100%;
+    width: 0;
+    border-radius: 2px;
+    transition: width 0.35s ease, background 0.35s;
+}
+.strength-bar.weak   { width: 33%; background: #ef4444; }
+.strength-bar.medium { width: 66%; background: #f59e0b; }
+.strength-bar.strong { width: 100%; background: #4ADE90; }
+
+.req-list {
+    list-style: none;
+    margin-top: 8px;
+    text-align: left;
+}
+.req-list li {
+    font-size: 0.74rem;
+    color: rgba(255, 255, 255, 0.40);
+    margin: 3px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+}
+.req-list li::before {
+    content: '○';
+    font-size: 0.55rem;
+}
+.req-list li.ok {
+    color: #4ADE90;
+}
+.req-list li.ok::before {
+    content: '●';
+}
+
+.hidden { display: none !important; }
+
+/* =============================================
+   RESPONSIVE GÉNÉRAL (ajouté / amélioré)
+   ============================================= */
+
+@media (max-width: 768px) {
+    .page-center {
+        padding: 18px 14px;
+        max-width: 100%;
+    }
+    .glass-card {
+        padding: 32px 24px 28px;
+        border-radius: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-icon {
+        font-size: clamp(36px, 8.5vw, 46px);
+    }
+    .brand {
+        font-size: clamp(1.95rem, 5.8vw, 2.35rem);
+    }
+    .slogan {
+        font-size: clamp(0.78rem, 3.2vw, 0.85rem);
+    }
+    .glass-card {
+        padding: 26px 20px 24px;
+        border-radius: 20px;
+    }
+    .field-wrap input,
+    input[type="email"],
+    input[type="text"],
+    input[type="password"] {
+        padding: 12px 38px 12px 36px;
+        font-size: 0.94rem;
+    }
+    .btn-main,
+    .btn-submit {
+        padding: 13px;
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .logo-icon {
+        font-size: 34px;
+    }
+    .brand {
+        font-size: 1.85rem;
+    }
+    .glass-card {
+        padding: 22px 16px 20px;
+    }
+}
+
+/* ══════════════════════════════════════
+   LANDING PAGE - MINIMALISTE
+══════════════════════════════════════ */
+
+.page-landing {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.landing-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.landing-logo {
+    font-size: clamp(80px, 20vw, 120px);
+    color: #4ade80;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 4px 20px rgba(74, 222, 144, 0.4));
+    animation: logo-pulse 2s ease-in-out infinite;
+}
+
+@keyframes logo-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.landing-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 8vw, 3.5rem);
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+    margin-bottom: 15px;
+}
+
+.landing-title span {
+    color: #4ADE90;
+}
+
+.landing-slogan {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(1rem, 3.5vw, 1.3rem);
+    font-weight: 700; /* GRAS */
+    color: #ffffff; /* BLANC */
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    margin-bottom: 50px;
+    line-height: 1.4;
+}
+
+/* Bouton Commencer - même couleur que inscription */
+.btn-commencer {
+    width: 100%;
+    max-width: 280px;
+    padding: 16px 32px;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: #ffffff;
+    background: linear-gradient(135deg, #03774d 0%, #05a868 50%, #03774d 100%);
+    background-size: 200% 200%;
+    box-shadow:
+        0 4px 20px rgba(3, 119, 77, 0.45),
+        0 1px 0 rgba(255, 255, 255, 0.15) inset;
+    transition: transform 0.2s, box-shadow 0.2s, background-position 0.4s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-commencer:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(3, 119, 77, 0.60);
+    background-position: right center;
+}
+
+.btn-commencer i {
+    transition: transform 0.3s;
+}
+
+.btn-commencer:hover i {
+    transform: translateX(6px);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .landing-logo {
+        font-size: clamp(70px, 22vw, 90px);
+        margin-bottom: 15px;
+    }
+    
+    .landing-title {
+        font-size: clamp(2.2rem, 9vw, 2.8rem);
+    }
+    
+    .landing-slogan {
+        font-size: 0.95rem;
+        margin-bottom: 40px;
+    }
+    
+    .btn-commencer {
+        padding: 14px 28px;
+        font-size: 1rem;
+        max-width: 260px;
+    }
+}
+
+@media (max-width: 360px) {
+    .landing-logo {
+        font-size: 60px;
+    }
+    
+    .landing-title {
+        font-size: 1.9rem;
+    }
+    
+    .landing-slogan {
+        font-size: 0.9rem;
+    }
+}

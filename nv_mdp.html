@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouveau mot de passe - Botania</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style/style.css">
+    <style>
+        .step { display: none; }
+        .step.active { display: block; }
+        
+        /* Adaptation pour la structure index.html */
+        .page-center {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 440px;
+            padding: 20px 16px;
+            margin: auto;
+        }
+        
+        /* Style des exigences de mot de passe harmonisé */
+        .req-list-custom {
+            list-style: none;
+            margin-top: 8px;
+            text-align: left;
+            padding: 0;
+        }
+        .req-list-custom li {
+            font-size: 0.74rem;
+            color: rgba(255, 255, 255, 0.40);
+            margin: 3px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .req-list-custom li::before {
+            content: '○';
+            font-size: 0.55rem;
+        }
+        .req-list-custom li.valid {
+            color: #4ADE90;
+        }
+        .req-list-custom li.valid::before {
+            content: '●';
+        }
+    </style>
+</head>
+<body>
+    <!-- Fond image plein écran -->
+    <div class="bg-photo"></div>
+    <!-- Voile sombre par-dessus pour lisibilité -->
+    <div class="bg-veil"></div>
+
+    <div class="page-center">
+        <div class="glass-card">
+            <!-- En-tête -->
+            <div class="card-header">
+                <i class="fa-solid fa-seedling logo-icon"></i>
+                <h1 class="brand">Botan<span>IA</span></h1>
+                <p class="slogan">Créez votre nouveau mot de passe</p>
+            </div>
+
+            <div id="step-loading" class="step active" style="text-align:center; padding:40px;">
+                <i class="fa-solid fa-circle-notch fa-spin fa-2x" style="color:#4ADE90;"></i>
+                <p style="color:rgba(255,255,255,0.82); margin-top:15px; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);">Vérification du lien...</p>
+            </div>
+
+            <div id="step-form" class="step">
+                <h2 class="form-title" style="font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; color: #fff; margin-bottom: 20px;">Nouveau mot de passe</h2>
+                <form id="new-password-form">
+                    <div class="field-group">
+                        <label class="field-label">Nouveau mot de passe</label>
+                        <div class="field-wrap">
+                            <i class="fa-solid fa-lock field-icon"></i>
+                            <input type="password" id="new-password" placeholder="••••••••" required autocomplete="new-password">
+                            <button type="button" class="eye-btn" onclick="togglePassword('new-password', this)">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                        <!-- Barre de force -->
+                        <div class="strength-bar-wrap">
+                            <div class="strength-bar" id="strength-bar"></div>
+                        </div>
+                        <!-- Exigences -->
+                        <ul class="req-list-custom">
+                            <li id="req-length">8 caractères minimum</li>
+                            <li id="req-upper">Une majuscule</li>
+                            <li id="req-lower">Une minuscule</li>
+                            <li id="req-number">Un chiffre</li>
+                        </ul>
+                    </div>
+
+                    <div class="field-group">
+                        <label class="field-label">Confirmer le mot de passe</label>
+                        <div class="field-wrap">
+                            <i class="fa-solid fa-lock field-icon"></i>
+                            <input type="password" id="confirm-password" placeholder="••••••••" required autocomplete="new-password">
+                            <button type="button" class="eye-btn" onclick="togglePassword('confirm-password', this)">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-main" id="submit-btn" disabled>
+                        <i class="fa-solid fa-lock"></i> Réinitialiser
+                    </button>
+                </form>
+            </div>
+
+            <div id="step-success" class="step" style="text-align:center; padding: 20px 0;">
+                <i class="fa-solid fa-circle-check" style="font-size:3rem; color:#4ADE90; margin-bottom:15px; filter: drop-shadow(0 0 12px rgba(74, 222, 144, 0.4));"></i>
+                <h2 class="form-title" style="font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; color: #fff; margin-bottom: 10px;">Mot de passe modifié !</h2>
+                <p style="color:rgba(255,255,255,0.82); font-size:0.88rem; margin-bottom:20px; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);">
+                    Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.
+                </p>
+                <a href="index.html" class="btn-main" style="display:inline-block; text-decoration:none;">
+                    Se connecter
+                </a>
+            </div>
+
+            <div id="step-error" class="step" style="text-align:center; padding: 20px 0;">
+                <i class="fa-solid fa-circle-xmark" style="font-size:3rem; color:#ef4444; margin-bottom:15px;"></i>
+                <h2 class="form-title" style="font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; color: #fff; margin-bottom: 10px;">Lien invalide ou expiré</h2>
+                <p style="color:rgba(255,255,255,0.7); font-size:0.88rem; margin-bottom:20px; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);">
+                    Ce lien a déjà été utilisé ou a expiré.<br>Faites une nouvelle demande.
+                </p>
+                <a href="reni_mdp.html" class="btn-main" style="display:inline-block; text-decoration:none;">
+                    Nouveau lien
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, verifyPasswordResetCode, confirmPasswordReset } from './js/firebase_config.js';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const oobCode   = urlParams.get('oobCode');
+        const mode      = urlParams.get('mode');
+        let userEmail   = '';
+
+        function showStep(id) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        async function init() {
+            if (mode !== 'resetPassword' || !oobCode) {
+                showStep('step-error');
+                return;
+            }
+            try {
+                userEmail = await verifyPasswordResetCode(auth, oobCode);
+                showStep('step-form');
+            } catch (error) {
+                console.error('[FIREBASE] Lien invalide :', error.code);
+                showStep('step-error');
+            }
+        }
+
+        const passwordInput = document.getElementById('new-password');
+        const confirmInput  = document.getElementById('confirm-password');
+        const submitBtn     = document.getElementById('submit-btn');
+
+        function validate() {
+            const pwd       = passwordInput.value;
+            const hasLength = pwd.length >= 8;
+            const hasUpper  = /[A-Z]/.test(pwd);
+            const hasLower  = /[a-z]/.test(pwd);
+            const hasNumber = /[0-9]/.test(pwd);
+
+            document.getElementById('req-length').classList.toggle('valid', hasLength);
+            document.getElementById('req-upper').classList.toggle('valid', hasUpper);
+            document.getElementById('req-lower').classList.toggle('valid', hasLower);
+            document.getElementById('req-number').classList.toggle('valid', hasNumber);
+
+            let strength = 0;
+            if (hasLength) strength++;
+            if (hasUpper && hasLower) strength++;
+            if (hasNumber) strength++;
+
+            const bar = document.getElementById('strength-bar');
+            bar.className = 'strength-bar';
+            if (strength === 1) bar.classList.add('weak');
+            else if (strength === 2) bar.classList.add('medium');
+            else if (strength >= 3) bar.classList.add('strong');
+
+            submitBtn.disabled = !(hasLength && hasUpper && hasLower && hasNumber && pwd === confirmInput.value);
+        }
+
+        passwordInput.addEventListener('input', validate);
+        confirmInput.addEventListener('input', validate);
+
+        document.getElementById('new-password-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Mise à jour...';
+
+            try {
+                await confirmPasswordReset(auth, oobCode, passwordInput.value);
+
+                const res = await fetch('php/update_mdp.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email:    userEmail,
+                        password: passwordInput.value
+                    })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    showStep('step-success');
+                } else {
+                    throw new Error(data.message || 'Erreur base de données');
+                }
+
+            } catch (error) {
+                console.error('[ERREUR]', error);
+                alert('Erreur : ' + error.message);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-lock"></i> Réinitialiser';
+            }
+        });
+
+        window.togglePassword = function(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon  = btn.querySelector('i');
+            input.type  = input.type === 'password' ? 'text' : 'password';
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        };
+
+        init();
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BotanIA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+    <!-- Fond image plein écran -->
+    <div class="bg-photo"></div>
+    <div class="bg-veil"></div>
+
+    <div id="landing-page" class="page-landing">
+        <div class="landing-container">
+            <i class="fa-solid fa-seedling landing-logo"></i>
+            <h1 class="landing-title">Botan<span>IA</span></h1>
+            <p class="landing-slogan">Les plantes, instantanément décryptées.</p>
+            
+            <button class="btn-commencer" onclick="showAuth()">
+                Commencer <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="auth-page" class="page-center hidden">
+        <div class="glass-card">
+            <div class="card-header">
+                <i class="fa-solid fa-seedling logo-icon"></i>
+                <h1 class="brand">Botan<span>IA</span></h1>
+                <p class="slogan">Les plantes, instantanément décryptées.</p>
+            </div>
+
+            <!-- Connexion -->
+            <div id="login-box">
+                <form action="php/connexion.php" method="POST">
+                    <div class="field-group">
+                        <label class="field-label">Adresse email</label>
+                        <div class="field-wrap">
+                            <i class="fa-solid fa-envelope field-icon"></i>
+                            <input type="email" name="email" placeholder="vous@exemple.com" required>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label class="field-label">Mot de passe</label>
+                        <div class="field-wrap">
+                            <i class="fa-solid fa-lock field-icon"></i>
+                            <input type="password" name="password" id="login-pw" placeholder="••••••••" required>
+                            <button type="button" class="eye-btn" onclick="toggleEye('login-pw', this)">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="forgot-row">
+                        <a href="reni_mdp.html" class="forgot-link">
+                            <i class="fa-solid fa-key"></i> Mot de passe oublié ?
+                        </a>
+                    </div>
+
+                    <button type="submit" class="btn-main">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i> Se connecter
+                    </button>
+                </form>
+                <p class="switch-text">Nouveau ici ? <a href="#" onclick="showRegister()">Créer un compte</a></p>
+            </div>
+
+            <!-- Inscription -->
+            <div id="register-box" class="hidden">
+                <form action="php/inscription.php" method="POST">
+                    <div class="field-group">
+                        <label class="field-label">Nom complet</label>
+                        <div class="field-wrap">
+                            <i class="fa-solid fa-user field-icon"></i>
+                            <input type="text" name="nom" placeholder="Votre nom" required>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label class="field-label">Adresse email</label>
+                        <div class="field-wrap">
+                            <i class="fa-solid fa-envelope field-icon"></i>
+                            <input type="email" name="email" placeholder="vous@exemple.com" required>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label class="field-label">Mot de passe</label>
+                        <div class="field-wrap">
+                            <i class="fa-solid fa-lock field-icon"></i>
+                            <input type="password" name="password" id="reg-pw" placeholder="••••••••" required oninput="checkStrength(this.value)">
+                            <button type="button" class="eye-btn" onclick="toggleEye('reg-pw', this)">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-main">
+                        <i class="fa-solid fa-seedling"></i> Créer mon compte
+                    </button>
+                </form>
+                <p class="switch-text">Déjà membre ? <a href="#" onclick="showLogin()">Se connecter</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation entre pages
+        function showAuth() {
+            document.getElementById('landing-page').classList.add('hidden');
+            document.getElementById('auth-page').classList.remove('hidden');
+        }
+        
+        function showLanding() {
+            document.getElementById('auth-page').classList.add('hidden');
+            document.getElementById('landing-page').classList.remove('hidden');
+        }
+
+        // Onglets Connexion/Inscription
+        function showLogin() {
+            document.getElementById('login-box').classList.remove('hidden');
+            document.getElementById('register-box').classList.add('hidden');
+        }
+        
+        function showRegister() {
+            document.getElementById('register-box').classList.remove('hidden');
+            document.getElementById('login-box').classList.add('hidden');
+        }
+
+        // Toggle mot de passe
+        function toggleEye(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            input.type = input.type === 'password' ? 'text' : 'password';
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        }
+
+        // Force du mot de passe
+        function checkStrength(val) {
+            const len = val.length >= 8;
+            const up = /[A-Z]/.test(val);
+            const low = /[a-z]/.test(val);
+            const num = /[0-9]/.test(val);
+
+            toggle('req-len', len);
+            toggle('req-up', up);
+            toggle('req-low', low);
+            toggle('req-num', num);
+
+            const score = [len, up, low, num].filter(Boolean).length;
+            const bar = document.getElementById('strength-bar');
+            bar.className = 'strength-bar';
+            if (score === 1) bar.classList.add('weak');
+            else if (score <= 3) bar.classList.add('medium');
+            else bar.classList.add('strong');
+        }
+
+        function toggle(id, ok) {
+            document.getElementById(id).classList.toggle('ok', ok);
+        }
+    </script>
+</body>
+</html>
+
+

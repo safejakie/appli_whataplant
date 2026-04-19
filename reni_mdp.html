@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réinitialiser le mot de passe - WhatAPlant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style/style.css">
+    <style>
+        .message-box { 
+            padding: 12px 16px; 
+            border-radius: 12px; 
+            margin-bottom: 16px; 
+            font-size: 0.85rem; 
+            display: none;
+            text-align: left;
+        }
+        .message-box.success { 
+            background: rgba(74, 222, 144, 0.15); 
+            border: 1px solid rgba(74, 222, 144, 0.4); 
+            color: #4ADE90; 
+            display: block; 
+        }
+        .message-box.error { 
+            background: rgba(239, 68, 68, 0.15); 
+            border: 1px solid rgba(239, 68, 68, 0.4); 
+            color: #ef4444; 
+            display: block; 
+        }
+        .back-link { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            color: rgba(74, 222, 144, 0.90); 
+            text-decoration: none; 
+            margin-top: 20px; 
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #4ADE90; }
+        .step { display: none; }
+        .step.active { display: block; }
+        
+        /* Adaptation pour la structure index.html */
+        .page-center {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 440px;
+            padding: 20px 16px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Fond image plein écran -->
+    <div class="bg-photo"></div>
+    <!-- Voile sombre par-dessus pour lisibilité -->
+    <div class="bg-veil"></div>
+
+    <div class="page-center">
+        <div class="glass-card">
+            <!-- En-tête -->
+            <div class="card-header">
+                <i class="fa-solid fa-seedling logo-icon"></i>
+                <h1 class="brand">Botan<span>IA</span></h1>
+                <p class="slogan">Réinitialisation du mot de passe</p>
+            </div>
+
+            <div id="step-email" class="step active">
+                <h2 class="form-title" style="font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: #fff; margin-bottom: 12px;">Mot de passe oublié ?</h2>
+                <p style="color:rgba(255,255,255,0.82); margin-bottom:20px; font-size:0.88rem; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);">
+                    Entrez votre adresse email. Nous vous enverrons un lien pour réinitialiser votre mot de passe.
+                </p>
+
+                <div id="message-box" class="message-box"></div>
+
+                <form id="reset-form">
+                    <div class="field-group">
+                        <label class="field-label">Adresse email</label>
+                        <div class="field-wrap">
+                            <i class="fa-solid fa-envelope field-icon"></i>
+                            <input type="email" id="email" placeholder="vous@exemple.com" required autocomplete="email">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-main" id="submit-btn">
+                        <i class="fa-solid fa-paper-plane"></i> Envoyer le lien
+                    </button>
+                </form>
+            </div>
+
+            <div id="step-success" class="step" style="text-align:center; padding: 20px 0;">
+                <i class="fa-solid fa-circle-check" style="font-size:3rem; color:#4ADE90; margin-bottom:15px; filter: drop-shadow(0 0 12px rgba(74, 222, 144, 0.4));"></i>
+                <h2 class="form-title" style="font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; color: #fff; margin-bottom:10px;">Email envoyé !</h2>
+                <p style="color:rgba(255,255,255,0.82); font-size:0.88rem; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);">
+                    Vérifiez votre boîte de réception.<br>Le lien est valable 1 heure.
+                </p>
+                <a href="index.html" class="btn-main" style="display:inline-block; margin-top:20px; text-decoration:none;">
+                    Retour à la connexion
+                </a>
+            </div>
+
+            <div style="text-align:center; margin-top:20px;">
+                <a href="index.html" class="back-link">
+                    <i class="fa-solid fa-arrow-left"></i> Retour à la connexion
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, sendPasswordResetEmail } from './js/firebase_config.js';
+
+        const resetForm  = document.getElementById('reset-form');
+        const submitBtn  = document.getElementById('submit-btn');
+        const messageBox = document.getElementById('message-box');
+
+        function showMessage(message, type) {
+            messageBox.className = `message-box ${type}`;
+            messageBox.innerHTML = type === 'success'
+                ? `<i class="fa-solid fa-check-circle"></i> ${message}`
+                : `<i class="fa-solid fa-exclamation-circle"></i> ${message}`;
+        }
+
+        function showStep(stepId) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById(stepId).classList.add('active');
+        }
+
+        resetForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Envoi...';
+
+            try {
+                const actionCodeSettings = {
+                    url: window.location.origin + '/Wataplant_projet/nv_mdp.html',
+                    handleCodeInApp: false
+                };
+
+                await sendPasswordResetEmail(auth, email);
+
+                console.log('%c[WHATAPLANT AUTH] Lien envoyé à : ' + email, 'color:#4ABA7A; font-weight:bold;');
+                showStep('step-success');
+
+            } catch (error) {
+                console.error('[FIREBASE ERROR]', error.code, error.message);
+
+                let msg = 'Une erreur est survenue.';
+                switch (error.code) {
+                    case 'auth/invalid-email':          msg = "L'adresse email est mal écrite."; break;
+                    case 'auth/user-not-found':         msg = "Aucun compte avec cet email."; break;
+                    case 'auth/too-many-requests':      msg = "Trop de tentatives. Patientez un peu."; break;
+                    case 'auth/network-request-failed': msg = "Vérifiez votre connexion internet."; break;
+                    default: msg = 'Erreur : ' + error.message;
+                }
+
+                showMessage(msg, 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Envoyer le lien';
+            }
+        });
+    </script>
+</body>
+</html>
+
+
