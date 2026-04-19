@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 COPY .. /var/www/html/
-RUN rm -f /var/www/html/index.html.default
+RUN rm -f /var/www/html/index.html
 RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 755 /var/www/html
 
