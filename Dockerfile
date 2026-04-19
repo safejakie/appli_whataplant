@@ -28,14 +28,22 @@ RUN chown -R www-data:www-data /var/www/html \
 # Installer les extensions PHP
 RUN docker-php-ext-install pdo pdo_mysql mysqli
 
+# Activer les modules Apache pour proxy
+RUN a2enmod proxy proxy_http
+
 # Configurer Apache pour écouter sur le port défini par Railway ($PORT, défaut 8080)
 RUN echo "Listen \${PORT:-8080}" >> /etc/apache2/ports.conf
 
-# Configurer Supervisor
-RUN printf "[supervisord]\nnodaemon=true\n\
-[program:apache2]\ncommand=apache2ctl -D FOREGROUND\n\
-[program:fastapi]\ncommand=/opt/venv/bin/python3 -m uvicorn agent:app --host 0.0.0.0 --port 8000 --app-dir /var/www/html\n" \
-> /etc/supervisor/conf.d/app.conf
+# Créer une config pour proxy les requêtes API vers FastAPI
+RUN echo '<VirtualHost *:\${PORT:-8080}>\n\
+    DocumentRoot /var/www/html\n\
+    <Directory /var/www/html>\n\
+        AllowOverride All\n\
+        Require all granted\n\
+    </Directory>\n\
+    ProxyPass /api http://localhost:8000/api\n\
+    ProxyPassReverse /api http://localhost:8000/api\n\
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
 # Exposer le port (Railway utilisera $PORT)
 EXPOSE 8080
