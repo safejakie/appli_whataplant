@@ -29,7 +29,8 @@ RUN chown -R www-data:www-data /var/www/html \
 RUN a2enmod proxy proxy_http rewrite
 
 # Désactiver les MPM conflictuels et garder mpm_prefork
-RUN a2dismod mpm_event mpm_worker || true
+RUN find /etc/apache2/mods-enabled -name "mpm_*.load" -delete
+RUN find /etc/apache2/mods-enabled -name "mpm_*.conf" -delete
 RUN a2enmod mpm_prefork
 
 EXPOSE 80 8000
