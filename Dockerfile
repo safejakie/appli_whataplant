@@ -1,10 +1,10 @@
-FROM php:8.2-apache
+FROM php:8.2-fpm
 
-# Installer pip et supervisor
+# Installer pip
 RUN apt-get update && apt-get install -y \
     python3-pip \
     python3-full \
-    supervisor \
+    nginx \
     && apt-get clean
 
 # Créer un environnement virtuel Python
@@ -14,24 +14,37 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Installer les packages Python
 RUN /opt/venv/bin/pip install fastapi "uvicorn[standard]" python-multipart pydantic requests opencv-python-headless numpy groq google-generativeai pillow python-dotenv wikipedia
 
-# Installer extensions PHP
-RUN docker-php-ext-install pdo pdo_mysql mysqli
-
 # Copier le projet
 COPY . /var/www/html/
-# Rendre start.sh exécutable
 RUN chmod +x /var/www/html/start.sh
 
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# Activer les modules Apache pour proxy
-RUN a2enmod proxy proxy_http rewrite
-
-# Désactiver les MPM conflictuels et garder mpm_prefork
-RUN find /etc/apache2/mods-enabled -name "mpm_*.load" -delete
-RUN find /etc/apache2/mods-enabled -name "mpm_*.conf" -delete
-RUN a2enmod mpm_prefork
+# Configurer Nginx pour servir les fichiers PHP et proxy FastAPI
+RUN mkdir -p /etc/nginx/conf.d && cat > /etc/nginx/conf.d/default.conf << 'EOF'
+server {
+    listen 80 default_server;
+    server_name _;
+    root /var/www/html;
+    
+    location ~ \.php$ {
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+    
+    location /api/ {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+    
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+}
+EOF
 
 EXPOSE 80 8000
 
