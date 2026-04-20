@@ -663,6 +663,42 @@ body{font-family:'DM Sans',sans-serif;background:var(--g5);color:var(--t1);heigh
     display: none;
 }
 
+.badge-oui {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86efac;
+}
+
+.badge-partiel {
+    background: #fef3c7;
+    color: #d97706;
+    border: 1px solid #fcd34d;
+}
+
+.badge-non {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fca5a5;
+}
+
+.plant-section div[style*="background:rgba(220,252,231,0.3)"] {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.plant-section div[style*="background:rgba(220,252,231,0.3)"]:hover {
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(45, 122, 58, 0.1);
+}
+
+.plant-section div[style*="background:#fee2e2"] {
+    animation: warningPulse 2s ease-in-out infinite;
+}
+
+@keyframes warningPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+}
+
 /* Loading & Toasts */
 .loading-state{display:flex;justify-content:center;padding:60px}
 .spin{width:30px;height:30px;border:3px solid var(--b1);border-top-color:var(--g1);border-radius:50%;animation:spin .8s linear infinite}

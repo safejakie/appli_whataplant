@@ -1215,17 +1215,84 @@ function showReport(r) {
         `;
     }
 
-    // === SECTION RECETTES ===
-    let sectionRecettes = '';
-    if ((r.comestible === 'Oui' || r.comestible === 'Partiellement') && r.idees_recettes) {
-        sectionRecettes = `
-            <div class="plant-section">
-                <h3><i class="fa-solid fa-bowl-food"></i> Idées recettes</h3>
-                <p>${esc(r.idees_recettes)}</p>
-                ${r.parties_comestibles ? `<p><strong>Parties comestibles :</strong> ${esc(r.parties_comestibles)}</p>` : ''}
+    // === SECTION COMESTIBILITÉ (toujours affichée) ===
+    let sectionComestibilite = '';
+
+    // Déterminer le badge selon la valeur
+    let comestibleBadge = '';
+    let comestibleIcon = '';
+    let comestibleColor = '';
+
+    if (r.comestible === 'Oui') {
+        comestibleBadge = '<span class="badge badge-oui"><i class="fa-solid fa-check"></i> Comestible</span>';
+        comestibleIcon = 'fa-check';
+        comestibleColor = '#15803d';
+    } else if (r.comestible === 'Partiellement') {
+        comestibleBadge = '<span class="badge" style="background:#fef3c7;color:#d97706"><i class="fa-solid fa-circle-half-stroke"></i> Partiellement comestible</span>';
+        comestibleIcon = 'fa-circle-half-stroke';
+        comestibleColor = '#d97706';
+    } else {
+        comestibleBadge = '<span class="badge badge-non"><i class="fa-solid fa-xmark"></i> Non comestible</span>';
+        comestibleIcon = 'fa-xmark';
+        comestibleColor = '#dc2626';
+    }
+
+    // Construire le contenu additionnel si comestible ou partiellement
+    let comestibleDetails = '';
+    if ((r.comestible === 'Oui' || r.comestible === 'Partiellement')) {
+        // Parties comestibles
+        if (r.parties_comestibles) {
+            comestibleDetails += `
+                <div style="margin-top:12px; padding:10px; background:rgba(220,252,231,0.3); border-radius:8px; border-left:3px solid ${comestibleColor}">
+                    <p style="margin:0; color:#1a4d1f"><strong><i class="fa-solid fa-carrot"></i> Parties comestibles :</strong></p>
+                    <p style="margin:4px 0 0 0; color:#2c3e2f">${esc(r.parties_comestibles)}</p>
+                </div>
+            `;
+        }
+        
+        // Idées de recettes
+        if (r.idees_recettes) {
+            comestibleDetails += `
+                <div style="margin-top:10px; padding:10px; background:rgba(220,252,231,0.3); border-radius:8px; border-left:3px solid ${comestibleColor}">
+                    <p style="margin:0; color:#1a4d1f"><strong><i class="fa-solid fa-bowl-food"></i> Idées recettes :</strong></p>
+                    <p style="margin:4px 0 0 0; color:#2c3e2f; line-height:1.5">${esc(r.idees_recettes)}</p>
+                </div>
+            `;
+        }
+        
+        // Préparation culinaire (si existe)
+        if (r.preparation_culinaire) {
+            comestibleDetails += `
+                <div style="margin-top:10px; padding:10px; background:rgba(220,252,231,0.3); border-radius:8px; border-left:3px solid ${comestibleColor}">
+                    <p style="margin:0; color:#1a4d1f"><strong><i class="fa-solid fa-fire-burner"></i> Préparation :</strong></p>
+                    <p style="margin:4px 0 0 0; color:#2c3e2f; line-height:1.5">${esc(r.preparation_culinaire)}</p>
+                </div>
+            `;
+        }
+    }
+
+    // Message spécifique si non comestible
+    let nonComestibleWarning = '';
+    if (r.comestible === 'Non') {
+        nonComestibleWarning = `
+            <div style="margin-top:12px; padding:10px; background:#fee2e2; border-radius:8px; border-left:3px solid #dc2626">
+                <p style="margin:0; color:#991b1b; font-size:13px">
+                    <i class="fa-solid fa-triangle-exclamation"></i> 
+                    <strong>Attention :</strong> Cette plante n'est pas comestible. Ne pas consommer.
+                </p>
             </div>
         `;
     }
+
+    // Assembler la section complète
+    sectionComestibilite = `
+        <div class="plant-section">
+            <h3><i class="fa-solid fa-utensils"></i> Comestibilité</h3>
+            <div style="margin-bottom:8px">${comestibleBadge}</div>
+            ${comestibleDetails}
+            ${nonComestibleWarning}
+        </div>
+    `;
 
     // === SECTION MÉDICINALE ===
     let sectionMedicinale = '';
@@ -1286,7 +1353,7 @@ function showReport(r) {
             </div>
             
             ${santeHTML}
-            ${sectionRecettes}
+            ${sectionComestibilite}
             ${sectionMedicinale}
             ${sectionToxicite}
             ${sectionEnvironnement}
