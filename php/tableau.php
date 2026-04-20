@@ -760,18 +760,114 @@ function addBot(html) {
     area.scrollTop = area.scrollHeight; 
 }
 
-function addTyping() { 
-    const area = document.getElementById('chat-area'); 
-    const div = document.createElement('div'); 
-    div.className = 'msg bot'; 
-    div.id = 'typing'; 
-    div.innerHTML = `<div class="msg-av bot"><i class="fa-solid fa-seedling"></i></div><div class="msg-bubble typing-dots"><span></span><span></span><span></span></div>`; 
-    area.appendChild(div); 
-    area.scrollTop = area.scrollHeight; 
+// ============================================================
+// 🔧 NOUVEAU : Système de messages d'étape (style Kimi)
+// ============================================================
+
+let typingSteps = [];
+let currentStepIndex = 0;
+let stepInterval = null;
+
+const ANALYSIS_STEPS = [
+    { icon: 'fa-eye', text: 'Analyse de l\'image en cours…' },
+    { icon: 'fa-fingerprint', text: 'Identification des caractéristiques visuelles…' },
+    { icon: 'fa-book-open', text: 'Recherche dans la base de données botanique…' },
+    { icon: 'fa-microscope', text: 'Analyse scientifique de la plante…' },
+    { icon: 'fa-flask', text: 'Évaluation de la santé et des propriétés…' },
+    { icon: 'fa-map-marker-alt', text: 'Géolocalisation du scan…' },
+    { icon: 'fa-seedling', text: 'Finalisation du rapport…' }
+];
+
+function addTyping() {
+    const area = document.getElementById('chat-area');
+    
+    const container = document.createElement('div');
+    container.className = 'msg bot';
+    container.id = 'typing-container';
+    
+    container.innerHTML = `
+        <div class="msg-av bot"><i class="fa-solid fa-seedling"></i></div>
+        <div class="msg-bubble typing-steps-bubble">
+            <div class="typing-steps-header">
+                <i class="fa-solid fa-circle-notch fa-spin"></i>
+                <span>Analyse en cours</span>
+            </div>
+            <div class="typing-steps-list" id="typing-steps-list"></div>
+            <div class="typing-progress-bar">
+                <div class="typing-progress-fill" id="typing-progress-fill"></div>
+            </div>
+        </div>
+    `;
+    
+    area.appendChild(container);
+    area.scrollTop = area.scrollHeight;
+    
+    startStepAnimation();
 }
 
-function removeTyping() { 
-    document.getElementById('typing')?.remove(); 
+function startStepAnimation() {
+    currentStepIndex = 0;
+    const list = document.getElementById('typing-steps-list');
+    const progressFill = document.getElementById('typing-progress-fill');
+    
+    if (!list) return;
+    
+    showStep(0);
+    
+    stepInterval = setInterval(() => {
+        currentStepIndex++;
+        
+        if (currentStepIndex < ANALYSIS_STEPS.length) {
+            showStep(currentStepIndex);
+        }
+        
+        const progress = Math.min(((currentStepIndex + 1) / ANALYSIS_STEPS.length) * 100, 95);
+        if (progressFill) {
+            progressFill.style.width = progress + '%';
+        }
+        
+    }, 2500);
+}
+
+function showStep(index) {
+    const list = document.getElementById('typing-steps-list');
+    if (!list) return;
+    
+    const step = ANALYSIS_STEPS[index];
+    if (!step) return;
+    
+    const stepEl = document.createElement('div');
+    stepEl.className = 'typing-step';
+    stepEl.innerHTML = `
+        <i class="fa-solid ${step.icon}"></i>
+        <span>${step.text}</span>
+    `;
+    
+    list.appendChild(stepEl);
+    
+    const container = document.getElementById('typing-container');
+    if (container) {
+        const bubble = container.querySelector('.typing-steps-bubble');
+        if (bubble) bubble.scrollTop = bubble.scrollHeight;
+    }
+    
+    requestAnimationFrame(() => {
+        stepEl.classList.add('visible');
+    });
+}
+
+function removeTyping() {
+    if (stepInterval) {
+        clearInterval(stepInterval);
+        stepInterval = null;
+    }
+    
+    const container = document.getElementById('typing-container');
+    if (container) {
+        container.style.opacity = '0';
+        container.style.transform = 'translateY(10px)';
+        setTimeout(() => container.remove(), 300);
+    }
 }
 
 function autoResize(el) { 
