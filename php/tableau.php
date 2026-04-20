@@ -1041,6 +1041,9 @@ function stopCamera() {
 }
 
 function showReport(r) {
+    if (${r.score_confiance} < 60) {
+
+    }
     currentPlantContext = { 
         nom_commun: r.nom_commun, 
         nom_scientifique: r.nom_scientifique 
@@ -1097,10 +1100,10 @@ function showReport(r) {
         
         if (maladiesValides.length > 0) {
             // Des maladies ont été détectées
-            maladiesDetecteesHTML = `<p><strong>🦠 Maladies détectées :</strong> ${esc(maladiesValides.join(', '))}</p>`;
+            maladiesDetecteesHTML = `<p><strong>Maladies détectées :</strong> ${esc(maladiesValides.join(', '))}</p>`;
         } else {
             // Aucune maladie détectée (vérification faite)
-            maladiesDetecteesHTML = `<p><strong>🦠 Maladies détectées :</strong> <span style="color: #15803d;"><i class="fa-solid fa-check"></i> Aucune maladie détectée</span></p>`;
+            maladiesDetecteesHTML = `<p><strong>Maladies détectées :</strong> <span style="color: #15803d;"><i class="fa-solid fa-check"></i> Aucune maladie détectée</span></p>`;
         }
 
         santeHTML = `
@@ -1195,6 +1198,7 @@ function showReport(r) {
             ${sectionEnvironnement}
         </div>
     `;
+    
 
     addBot(html);
     
@@ -1240,7 +1244,7 @@ async function deleteScan(id, btnElement) {
     card.style.opacity = '0.5';
     
     try {
-        const response = await fetch('php/delete_scan.php', {
+        const response = await fetch('delete_scan.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: id })
