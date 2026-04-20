@@ -1,7 +1,6 @@
 <?php
-// Fichier : php/deconnexion.php
 session_start();
 session_destroy();
-header("Location: ../index.html");
-exit();
+header('Location: ../index.html?page=login');
+exit;
 ?>
