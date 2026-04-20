@@ -24,8 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Hash du mot de passe
     $hash = password_hash($password, PASSWORD_DEFAULT);
 
-    // Insertion
-    $stmt = $pdo->prepare("INSERT INTO utilisateurs (nom, email, mot_de_passe) VALUES (?, ?, ?)");
+    // Insertion avec nom_complet
+    $stmt = $pdo->prepare("INSERT INTO utilisateurs (nom_complet, email, mot_de_passe) VALUES (?, ?, ?)");
     $stmt->execute([$nom, $email, $hash]);
 
     $userId = $pdo->lastInsertId();
