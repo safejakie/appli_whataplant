@@ -54,48 +54,73 @@ class ChatMessage(BaseModel):
     message: str
     contexte: Optional[dict] = None
 
-# ── Prompts ───────────────────────────────────────────────
 PROMPT_SYSTEME = """Tu es un expert botaniste et cuisinier spécialisé dans les plantes et recettes traditionnelles d'Afrique de l'Ouest et des régions tropicales. 
 Réponds en français de façon claire, chaleureuse, précise et sécurisée. 
 Quand l'utilisateur demande une recette, donne les ingrédients, les étapes de préparation, le temps de cuisson et des conseils de sécurité."""
 
-PROMPT_ENRICHISSEMENT = """Analyse cette plante: "{nom}" ({nom_scientifique})
+PROMPT_ENRICHISSEMENT = """Tu es un expert botaniste et phytopathologiste spécialisé dans les plantes d'Afrique de l'Ouest et des régions tropicales.
 
-Fournis UNIQUEMENT ce JSON valide:
+Analyse cette plante: "{nom}" ({nom_scientifique})
+
+Fournis UNIQUEMENT ce JSON valide et rien d'autre :
+
 {{
-  "description": "2 phrases décrivant la plante",
+  "description": "2 phrases précises et factuelles décrivant la plante",
+
   "comestible": "Oui|Non|Partiellement",
-  "parties_comestibles": "feuilles, fruits... ou null",
-  "idees_recettes": "suggestions simples ou null",
-  
+  "parties_comestibles": "feuilles, fruits, tubercules, graines... ou null",
+  "idees_recettes": "suggestions simples et réalistes ou null",
+
   "est_medicinale": true|false,
-  "maladies_traitees": ["maladie 1", "maladie 2", "maladie 3"],
-  "proprietes_medicinales": "principales propriétés thérapeutiques",
-  "posologie": "mode d'emploi simple",
-  "contre_indications": "précautions importantes",
-  
+  "maladies_traitees": ["maladie 1", "maladie 2", "maladie 3"] ou [],
+  "proprietes_medicinales": "propriétés thérapeutiques reconnues, basées sur des usages traditionnels ou scientifiques",
+  "posologie": "mode d'emploi simple et sécurisé ou null",
+  "contre_indications": "précautions importantes, contre-indications ou null",
+
   "est_toxique": true|false,
   "niveau_toxicite": "Aucun|Faible|Moyen|Élevé",
-  "toxicite_pourcentage": 0,
-  "symptomes_intoxication": "signes d'alerte",
-  "premiers_secours": "que faire en cas d'ingestion",
-  
+  "toxicite_pourcentage": nombre entre 0 et 100,
+  "symptomes_intoxication": "principaux signes d'alerte en cas d'ingestion",
+  "premiers_secours": "gestes d'urgence recommandés",
+
   "est_invasive": true|false,
   "est_allelopathique": true|false,
-  "impact_environnement": "effet sur sol et cultures voisines"
-}}"""
+  "impact_environnement": "effet sur le sol, les cultures voisines et la biodiversité locale"
+}}
+
+**Instructions importantes :**
+- Sois rigoureux et réaliste. Ne mets pas "true" ou "false" sans raison solide.
+- Base tes réponses sur des connaissances botaniques réelles, surtout pour les plantes courantes en Afrique de l'Ouest.
+- Pour "est_medicinale", "est_toxique", "est_invasive" et "est_allelopathique", justifie intérieurement avant de répondre.
+- Si tu n'es pas sûr pour une propriété, penche plutôt vers "false" ou "Aucun" plutôt que de donner une fausse information.
+"""
+
 
 PROMPT_SANTE = """Tu es un expert phytopathologiste spécialisé dans les plantes d'Afrique de l'Ouest et tropicales.
 
-Analyse uniquement l'état de santé visible de cette plante sur l'image.
+Analyse VISUELLEMENT et avec précision l'état de santé de cette plante sur l'image.
+
+Inspecte attentivement :
+- La couleur des feuilles (jaunissement, brunissement, décoloration)
+- La présence de taches (taches noires, brunes, rougeâtres, nécrotiques)
+- Les déformations (feuilles enroulées, froissées, déchirées)
+- La présence de champignons, moisissures, insectes ou autres parasites visibles
+- L'aspect général (flétrissement, dessèchement, pourriture)
 
 Réponds **UNIQUEMENT** avec ce JSON valide et rien d'autre :
 
 {
   "etat": "Bonne | Moyenne | Mauvaise | Critique",
-  "causes": "Causes probables expliquées en une phrase",
+  "maladies_detectees": ["nom maladie 1", "nom maladie 2"] ou [] si aucune visible,
+  "causes": "Causes probables expliquées en une phrase basée sur ce qui est visible dans l'image",
   "recommandations": "Conseils pratiques et simples pour améliorer la santé de la plante"
 }
+
+**Règles strictes :**
+- Si tu vois des taches, du jaunissement ou des signes de maladie : indique-les dans "maladies_detectees" avec le nom précis (ex: "Oïdium", "Chlorose ferrique", "Taches fongiques", "Brûlure bactérienne", "Anthracnose", etc.)
+- "maladies_detectees" doit être un tableau JSON (liste), jamais une chaîne de texte
+- Ne retourne JAMAIS un tableau vide si l'état est "Mauvaise" ou "Critique"
+- Sois rigoureux : base-toi uniquement sur ce que tu vois visuellement dans l'image
 """
 
 # ── Fonctions Utilitaires ─────────────────────────────────
