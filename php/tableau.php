@@ -1041,9 +1041,7 @@ function stopCamera() {
 }
 
 function showReport(r) {
-    if (${r.score_confiance} < 60) {
 
-    }
     currentPlantContext = { 
         nom_commun: r.nom_commun, 
         nom_scientifique: r.nom_scientifique 
