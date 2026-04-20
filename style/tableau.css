@@ -663,40 +663,61 @@ body{font-family:'DM Sans',sans-serif;background:var(--g5);color:var(--t1);heigh
     display: none;
 }
 
+/* ============================================================
+   🔧 BADGES COMESTIBILITÉ - Uniformisés avec le reste
+   ============================================================ */
+
+/* Badges de base (utilisés par toutes les sections) */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
 .badge-oui {
     background: #dcfce7;
     color: #15803d;
-    border: 1px solid #86efac;
 }
 
 .badge-partiel {
     background: #fef3c7;
     color: #d97706;
-    border: 1px solid #fcd34d;
 }
 
 .badge-non {
     background: #fee2e2;
     color: #dc2626;
-    border: 1px solid #fca5a5;
 }
 
-.plant-section div[style*="background:rgba(220,252,231,0.3)"] {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+/* Info ligne simple (parties comestibles, recettes, etc.) */
+.info-ligne {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #2c3e2f;
+    line-height: 1.5;
 }
 
-.plant-section div[style*="background:rgba(220,252,231,0.3)"]:hover {
-    transform: translateX(4px);
-    box-shadow: 0 2px 8px rgba(45, 122, 58, 0.1);
+.info-ligne strong {
+    color: #1a4d1f;
+    font-weight: 600;
 }
 
-.plant-section div[style*="background:#fee2e2"] {
-    animation: warningPulse 2s ease-in-out infinite;
+/* Avertissement simple non comestible */
+.warning-simple {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #fee2e2;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #991b1b;
 }
 
-@keyframes warningPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.85; }
+.warning-simple i {
+    margin-right: 6px;
 }
 
 /* Loading & Toasts */
