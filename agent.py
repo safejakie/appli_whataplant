@@ -485,7 +485,14 @@ async def analyze(image: UploadFile = File(...)):
         raise HTTPException(status_code=422, detail=err)
     
     result["image_b64"] = "data:image/jpeg;base64," + base64.b64encode(data).decode()
-    
+
+    # ✅ Vérification score de confiance
+    if result.get("score_confiance", 0) < 50:
+        result["faible_confiance"] = True
+        result["message_confiance"] = f"⚠️ Score de confiance faible ({result['score_confiance']}%). Voulez-vous afficher le résultat ou fournir une image plus claire ?"
+    else:
+        result["faible_confiance"] = False
+
     return result
 
 

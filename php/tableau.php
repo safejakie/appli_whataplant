@@ -1039,6 +1039,22 @@ async function uploadImage(e) {
             
             const res = await r.json();
             console.log('🔍 Réponse API:', res);
+
+            // ✅ Vérification score de confiance < 50%
+            if (res.faible_confiance) {
+                console.warn(`⚠️ Score de confiance faible : ${res.score_confiance}%`);
+                removeTyping();
+                const choix = confirm(
+                    `⚠️ Score de confiance : ${res.score_confiance}%\n\n` +
+                    `La plante détectée est "${res.nom_commun}" mais avec un faible score.\n\n` +
+                    `✅ OK → Afficher quand même le résultat\n` +
+                    `❌ Annuler → Fournir une image plus claire`
+                );
+                if (!choix) {
+                    setLoading(false);
+                    return;
+                }
+            }
             
             removeTyping();
             
@@ -1110,7 +1126,23 @@ async function capturePhoto() {
                 
                 const res = await r.json();
                 console.log('🔍 Réponse API capture:', res);
-                
+
+                // ✅ Vérification score de confiance < 50%
+                if (res.faible_confiance) {
+                    console.warn(`⚠️ Score faible capture : ${res.score_confiance}%`);
+                    removeTyping();
+                    const choix = confirm(
+                        `⚠️ Score de confiance : ${res.score_confiance}%\n\n` +
+                        `La plante détectée est "${res.nom_commun}" mais avec un faible score.\n\n` +
+                        `✅ OK → Afficher quand même le résultat\n` +
+                        `❌ Annuler → Reprendre une photo plus claire`
+                    );
+                    if (!choix) {
+                        setLoading(false);
+                        return;
+                    }
+                }
+
                 if (location) {
                     res.lieu = location.lieu;
                     res.latitude = location.latitude;
