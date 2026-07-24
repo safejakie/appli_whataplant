@@ -3,7 +3,7 @@ $host     = getenv('MYSQLHOST')          ?: 'localhost';
 $dbname   = getenv('MYSQLDATABASE')      ?: 'whataplant_db';
 $username = getenv('MYSQLUSER')          ?: 'root';
 $password = getenv('MYSQLPASSWORD')      ?: '';
-$port     = getenv('MYSQLPORT')          ?: '3306';
+$port     = getenv('MYSQLPORT')          ?: '3307';
 
 try {
     $pdo = new PDO(
