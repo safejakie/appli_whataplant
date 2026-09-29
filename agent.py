@@ -418,7 +418,7 @@ async def chat(data: ChatMessage):
         prompt_complet = f"{PROMPT_SYSTEME}{contexte_txt}\n\nQuestion de l'utilisateur: {msg}"
         
         reponse_groq = client_groq.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-120b",
             messages=[
                 {"role": "system", "content": PROMPT_SYSTEME},
                 {"role": "user", "content": prompt_complet}
